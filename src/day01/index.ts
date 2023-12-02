@@ -1,5 +1,5 @@
 const parseInput = async () => {
-  const inputFile = Bun.file("src/input.txt");
+  const inputFile = Bun.file("src/day01/input.txt");
   const input = await inputFile.text();
   return input.split("\n");
 };
@@ -51,10 +51,10 @@ const calibrate = (calibration: Array<number>) => {
   return calibration.reduce((acc, curr) => acc + curr, 0);
 };
 
-const main = async () => {
+const day01 = async () => {
   const input = await parseInput();
   const calibration = extractCalibration(input);
   return calibrate(calibration);
 };
 
-console.log(await main());
+console.log(await day01());
