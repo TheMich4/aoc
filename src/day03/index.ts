@@ -102,12 +102,11 @@ const day03 = async () => {
 
   return lines.reduce((acc, line, lineIndex) => {
     for (const [charIndex, char] of line.split("").entries()) {
-      isSymbol(char);
-
       if (isSymbol(char)) {
         const adjustedNumbers = getAdjustedNumbers(lines, lineIndex, charIndex);
-        // Add adjusted numbers to acc
-        acc = acc + adjustedNumbers.reduce((acc, curr) => acc + curr, 0);
+        if (char === "*" && adjustedNumbers.length >= 2) {
+          acc = acc + adjustedNumbers.reduce((acc, curr) => acc * curr, 1);
+        }
       }
     }
 
