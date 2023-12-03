@@ -7,68 +7,107 @@ const isSymbol = (char: string) => {
   return true;
 };
 
-const checkAdjusted = (
+const getFullNumber = (line: string, charIndex: number) => {
+  let numberString = line[charIndex];
+  let left = false;
+  let right = false;
+
+  for (const char of line.split("").slice(0, charIndex).reverse()) {
+    if (!isNumber(char)) break;
+    numberString = `${char}${numberString}`;
+    left = true;
+  }
+  for (const char of line.split("").slice(charIndex + 1)) {
+    if (!isNumber(char)) break;
+    numberString = `${numberString}${char}`;
+    right = true;
+  }
+
+  return { number: +numberString, left, right };
+};
+
+const isNumber = (char: string) => {
+  return !isNaN(+char);
+};
+
+const getAdjustedNumbers = (
   lines: string[],
   lineIndex: number,
   charIndex: number
 ) => {
-  let lineAbove = false;
-  let lineBelow = false;
-  let lineCurrent = false;
+  const adjustedNumbers = [];
 
-  if (lineIndex !== 0) {
-    lineAbove =
-      isSymbol(lines[lineIndex - 1][charIndex - 1]) ||
-      isSymbol(lines[lineIndex - 1][charIndex]) ||
-      isSymbol(lines[lineIndex - 1][charIndex + 1]);
+  // Current line
+  const line = lines[lineIndex];
+  if (isNumber(lines[lineIndex][charIndex - 1])) {
+    const { number } = getFullNumber(line, charIndex - 1);
+    adjustedNumbers.push(number);
   }
-  if (lineIndex !== lines.length - 1) {
-    lineBelow =
-      isSymbol(lines[lineIndex + 1][charIndex - 1]) ||
-      isSymbol(lines[lineIndex + 1][charIndex]) ||
-      isSymbol(lines[lineIndex + 1][charIndex + 1]);
+  if (isNumber(lines[lineIndex][charIndex + 1])) {
+    const { number } = getFullNumber(line, charIndex + 1);
+    adjustedNumbers.push(number);
   }
 
-  lineCurrent =
-    isSymbol(lines[lineIndex][charIndex - 1]) ||
-    isSymbol(lines[lineIndex][charIndex + 1]);
+  // Above line
+  if (lineIndex > 0) {
+    const aboveLine = lines[lineIndex - 1];
+    let left = false,
+      right = false;
+    if (isNumber(aboveLine[charIndex])) {
+      const value = getFullNumber(aboveLine, charIndex);
+      adjustedNumbers.push(value.number);
 
-  return lineAbove || lineBelow || lineCurrent;
+      left = value.left;
+      right = value.right;
+    }
+    if (!left && isNumber(aboveLine[charIndex - 1])) {
+      const { number } = getFullNumber(aboveLine, charIndex - 1);
+      adjustedNumbers.push(number);
+    }
+    if (!right && isNumber(aboveLine[charIndex + 1])) {
+      const { number } = getFullNumber(aboveLine, charIndex + 1);
+      adjustedNumbers.push(number);
+    }
+  }
+
+  // Below line
+  if (lineIndex < lines.length - 1) {
+    const belowLine = lines[lineIndex + 1];
+    let left = false,
+      right = false;
+    if (isNumber(belowLine[charIndex])) {
+      const value = getFullNumber(belowLine, charIndex);
+      adjustedNumbers.push(value.number);
+
+      left = value.left;
+      right = value.right;
+    }
+    if (!left && isNumber(belowLine[charIndex - 1])) {
+      const { number } = getFullNumber(belowLine, charIndex - 1);
+      adjustedNumbers.push(number);
+    }
+    if (!right && isNumber(belowLine[charIndex + 1])) {
+      const { number } = getFullNumber(belowLine, charIndex + 1);
+      adjustedNumbers.push(number);
+    }
+  }
+
+  return adjustedNumbers;
 };
 
 const day03 = async () => {
   const lines = (await getInput("src/day03/input.txt"))
     .split("\n")
-    .map((l) => `$.${l}.`);
+    .map((l) => `.${l}.`);
 
   return lines.reduce((acc, line, lineIndex) => {
-    let parsingNumber = undefined;
-    let isAdjusted = false;
-
     for (const [charIndex, char] of line.split("").entries()) {
-      if (isNaN(+char)) {
-        if (parsingNumber && isAdjusted) {
-          console.log("parsingNumber", parsingNumber);
-          acc += +parsingNumber;
-          isAdjusted = false;
-        }
+      isSymbol(char);
 
-        parsingNumber = undefined;
-        continue;
-      }
-
-      if (parsingNumber === undefined) {
-        parsingNumber = char;
-      } else {
-        parsingNumber += char;
-      }
-
-      isAdjusted = isAdjusted || checkAdjusted(lines, lineIndex, charIndex);
-
-      console.log(char, parsingNumber, charIndex, lineIndex, isAdjusted);
-
-      if (charIndex === line.length - 1) {
-        parsingNumber = undefined;
+      if (isSymbol(char)) {
+        const adjustedNumbers = getAdjustedNumbers(lines, lineIndex, charIndex);
+        // Add adjusted numbers to acc
+        acc = acc + adjustedNumbers.reduce((acc, curr) => acc + curr, 0);
       }
     }
 
