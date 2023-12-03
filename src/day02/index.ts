@@ -1,3 +1,5 @@
+import { getInput } from "../get-input";
+
 const LIMITS = new Proxy(
   {
     red: 12,
@@ -9,13 +11,8 @@ const LIMITS = new Proxy(
   }
 );
 
-const getInput = async () => {
-  const inputFile = Bun.file("src/day02/input.txt");
-  return await inputFile.text();
-};
-
 const getValidGamesSum = async () => {
-  const input = await getInput();
+  const input = await getInput("src/day02/input.txt");
   const record = input.split("\n");
 
   return record.reduce((gamesSum, currRecord) => {
@@ -37,7 +34,7 @@ const getValidGamesSum = async () => {
 };
 
 const getPower = async () => {
-  const input = await getInput();
+  const input = await getInput("src/day02/input.txt");
   const record = input.split("\n");
 
   const gameValues = record.reduce((recordAcc, currRecord) => {
@@ -69,5 +66,3 @@ const day02 = async () => {
   //   return await getValidGamesSum();
   return await getPower();
 };
-
-console.log(await day02());
