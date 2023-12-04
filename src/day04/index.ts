@@ -17,18 +17,19 @@ const part01 = async () => {
 };
 
 const part02 = async () => {
+  console.time("x");
   const lines = (await getInput("src/day04/input.txt")).split("\n");
   const scratchcards = new Array(lines.length).fill(1);
 
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-    for (let i = 0; i < scratchcards[lineIndex]; i++) {
-      const line = lines[lineIndex];
-      const [_, numbers] = line.split(": ");
-      const [winningNumbers, yourNumbers] = numbers
-        .split(" | ")
-        .map((n) => n.split(" ").filter(Boolean));
-      const winners = winningNumbers.filter((n) => yourNumbers.includes(n));
+    const line = lines[lineIndex];
+    const [_, numbers] = line.split(": ");
+    const [winningNumbers, yourNumbers] = numbers
+      .split(" | ")
+      .map((n) => n.split(" ").filter(Boolean));
+    const winners = winningNumbers.filter((n) => yourNumbers.includes(n));
 
+    for (let i = 0; i < scratchcards[lineIndex]; i++) {
       if (winners.length === 0) {
         continue;
       }
@@ -38,6 +39,8 @@ const part02 = async () => {
       }
     }
   }
+
+  console.timeEnd("x");
 
   return scratchcards.reduce((result, scratchcard) => result + scratchcard, 0);
 };
