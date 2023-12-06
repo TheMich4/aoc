@@ -1,40 +1,30 @@
 import { getInput } from "../get-input";
 
 const day06 = async () => {
-  const [time, distance] = (await getInput("src/day06/input.txt")).split("\n");
-  const times = time.trim().split(/\s+/).slice(1).map(Number);
-  const distances = distance.trim().split(/\s+/).slice(1).map(Number);
+  const [timeInput, distance] = (await getInput("src/day06/input.txt")).split(
+    "\n"
+  );
+  const time = +timeInput.trim().split(/\s+/).slice(1).join("");
+  const record = +distance.trim().split(/\s+/).slice(1).join("");
 
-  let result = 1;
+  let winCount = 0;
+  let speed = -1;
+  let reachedRecord = false;
 
-  for (let i = 0; i < times.length; i++) {
-    let winCount = 0;
+  for (let holdTime = 0; holdTime <= time; holdTime++) {
+    speed += 1;
+    const timeLeft = time - holdTime;
+    const distance = speed * timeLeft;
 
-    const time = times[i];
-    const record = distances[i];
+    if (distance > record) {
+      reachedRecord = true;
+      winCount++;
+    }
 
-    let speed = -1;
-    let reachedRecord = false;
-
-    for (let holdTime = 0; holdTime <= time; holdTime++) {
-      speed += 1;
-      const timeLeft = time - holdTime;
-      const distance = speed * timeLeft;
-
-      if (distance > record) {
-        reachedRecord = true;
-        winCount++;
-      }
-
-      if (distance < record && reachedRecord) {
-        console.log("->", result, winCount);
-        result *= winCount;
-        break;
-      }
+    if (distance < record && reachedRecord) {
+      return winCount;
     }
   }
-
-  return result;
 };
 
 console.log(await day06());
