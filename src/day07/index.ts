@@ -1,6 +1,7 @@
 import { getInput } from "../get-input";
 
 const strength = [
+  "J",
   "2",
   "3",
   "4",
@@ -10,7 +11,6 @@ const strength = [
   "8",
   "9",
   "T",
-  "J",
   "Q",
   "K",
   "A",
@@ -19,11 +19,28 @@ const strength = [
 const getValue = (count: Record<string, number>) => {
   const differentCards = Object.values(count).length;
 
+  if (count["J"]) {
+    if (differentCards === 5) return 2;
+    if (differentCards === 4) return 4;
+    if (differentCards === 3) {
+      if (count["J"] === 1) {
+        if (Math.max(...Object.values(count)) === 3) return 6;
+        return 5;
+      }
+      return 6;
+    }
+    return 7;
+  }
+
   if (differentCards === 5) return 1;
   if (differentCards === 4) return 2;
   if (Object.values(count).filter((v) => v === 2).length === 2) return 3;
   if (differentCards === 3) return 4;
-  if (Object.values(count).filter((v) => v === 2).length === 1) return 5;
+  if (
+    Object.values(count).filter((v) => v === 2).length === 1 &&
+    Object.values(count).filter((v) => v === 3).length === 1
+  )
+    return 5;
   if (differentCards === 2) return 6;
   return 7;
 };
@@ -75,7 +92,7 @@ const day07 = async () => {
     return 0;
   });
 
-  return ordered.reduce((acc, { bid, value, cards }, index) => {
+  return ordered.reduce((acc, { bid }, index) => {
     return (acc += bid * (index + 1));
   }, 0);
 };
