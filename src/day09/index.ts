@@ -17,10 +17,10 @@ const day09 = async () => {
       }
       deltas.push(newDeltas);
       row++;
-    } while (!deltas[row].every((d) => d === deltas[row][0]));
+    } while (!deltas[row].every((d) => d === 0));
 
-    return (acc += deltas.reduce((newNumber, row) => {
-      return newNumber + row[row.length - 1];
+    return (acc += deltas.reverse().reduce((newNumber, row) => {
+      return row[0] - newNumber;
     }, 0));
   }, 0);
 };
