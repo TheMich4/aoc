@@ -58,9 +58,9 @@ const printDistances = (distances: Array<Array<number | undefined>>) => {
   for (let i = 0; i < distances.length; i++) {
     for (let j = 0; j < distances[i].length; j++) {
       if (distances[i][j] === undefined) {
-        process.stdout.write(".");
+        process.stdout.write(".\t");
       } else {
-        process.stdout.write(distances[i][j].toString());
+        process.stdout.write(`${distances[i][j].toString()}\t`);
       }
     }
     process.stdout.write("\n");
@@ -87,7 +87,7 @@ const day10 = async () => {
     }
   }
 
-  let step = -1;
+  let step = 1;
 
   do {
     let newPositions = [];
@@ -107,9 +107,9 @@ const day10 = async () => {
     step++;
   } while (currentPositions.length > 0);
 
-  // printDistances(distances);
+  printDistances(distances);
 
-  return step;
+  return step - 2;
 };
 
 console.log(await day10());
