@@ -58,7 +58,7 @@ const day11 = async () => {
   );
 
   // Get positions
-  const diff = 1;
+  const diff = 1000000 - 1;
   const positions = galaxies.map((g) => {
     const newRow = g[0] + diff * [...emptyRows].filter((r) => r < g[0]).length;
     const newCol = g[1] + diff * [...emptyCols].filter((c) => c < g[1]).length;
