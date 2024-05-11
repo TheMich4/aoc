@@ -36,7 +36,7 @@ fn main() {
 
     let mut total: i32 = 0;
 
-    games.into_iter().enumerate().for_each(|(i, game)| {
+    games.clone().into_iter().enumerate().for_each(|(i, game)| {
         let mut is_valid = true;
 
         game.iter().for_each(|g| {
@@ -56,4 +56,28 @@ fn main() {
     });
 
     println!("Total: {}", total);
+
+    let mut sum = 0;
+
+    games.clone().iter().for_each(|g| {
+        let mut count: HashMap<&str, i32> = HashMap::new();
+
+        g.iter().for_each(|a| {
+            a.keys().for_each(|k| {
+                let max = count.get(k).unwrap_or(&0);
+                let value = a.get(k).unwrap();
+
+                count.insert(k, std::cmp::max(*max, *value));
+            })
+        });
+
+        sum += count
+            .values()
+            .into_iter()
+            .copied()
+            .reduce(|a, b| a * b)
+            .unwrap();
+    });
+
+    println!("Sum: {}", sum);
 }
