@@ -1,5 +1,6 @@
 use std::{
     cmp::{max, min},
+    collections::HashMap,
     fs,
 };
 
@@ -11,6 +12,7 @@ fn main() {
     println!("-----");
 
     let mut sum = 0;
+    let mut map: HashMap<(i32, i32), Vec<i32>> = HashMap::new();
 
     for (line_number, line) in contents.lines().enumerate() {
         // Addes a dot at the end of the line to make parsing easier
@@ -43,7 +45,7 @@ fn main() {
                     let y_end = min(contents.len() as i32, line_number as i32 + 1);
 
                     for y in y_start..(y_end + 1) {
-                        let mut found = false;
+                        // let mut found = false;
 
                         for x in x_start..(x_end + 1) {
                             let sign = contents
@@ -56,20 +58,31 @@ fn main() {
                             if sign.is_some() {
                                 let sign_unwrapped = sign.unwrap();
 
-                                if !sign_unwrapped.is_numeric() && sign_unwrapped != '.' {
-                                    sum += number;
-                                    found = true;
-                                    break;
+                                if sign_unwrapped == '*' {
+                                    let numbers = map.entry((x, y)).or_insert(vec![]);
+                                    numbers.push(number);
                                 }
+
+                                // if !sign_unwrapped.is_numeric() && sign_unwrapped != '.' {
+                                //     sum += number;
+                                //     found = true;
+                                //     break;
+                                // }
                             }
                         }
 
-                        if found {
-                            break;
-                        }
+                        // if found {
+                        //     break;
+                        // }
                     }
                 }
             }
+        }
+    }
+
+    for (_, numbers) in map.iter() {
+        if numbers.len() == 2 {
+            sum += numbers[0] * numbers[1];
         }
     }
 
