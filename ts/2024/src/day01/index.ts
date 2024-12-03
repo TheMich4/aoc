@@ -16,11 +16,36 @@ const { list1, list2 } = lines.reduce(
   { list1: [], list2: [] },
 );
 
-const list1Sorted = [...list1].sort();
-const list2Sorted = [...list2].sort();
+const getCount = (arr: Array<number>) => {
+  return arr.reduce((acc, curr) => {
+    return {
+      ...acc,
+      [curr]: (acc[curr] ?? 0) + 1,
+    };
+  }, {});
+};
 
-const sum = list1Sorted.reduce((acc, curr, i) => {
-  return acc + Math.abs(curr - list2Sorted[i]);
-}, 0);
+const part1 = () => {
+  const list1Sorted = [...list1].sort();
+  const list2Sorted = [...list2].sort();
 
-console.log(sum);
+  const sum = list1Sorted.reduce((acc, curr, i) => {
+    return acc + Math.abs(curr - list2Sorted[i]);
+  }, 0);
+
+  console.log(sum);
+};
+
+const part2 = () => {
+  const list1Count = getCount(list1);
+  const list2Count = getCount(list2);
+
+  const sum = Object.entries(list1Count).reduce((acc, [key, value]) => {
+    return acc + +key * value * (list2Count[key] ?? 0);
+  }, 0);
+
+  console.log(sum);
+};
+
+part1();
+part2();
